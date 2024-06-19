@@ -1,0 +1,80 @@
+{
+  "parserOptions": {
+    "project": "tsconfig.json"
+  },
+  "plugins": ["import", "promise", "unicorn", "sonarjs"],
+  "extends": [
+    "prettier",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/strict-type-checked",
+    "plugin:@typescript-eslint/stylistic-type-checked",
+    "plugin:import/recommended",
+    "plugin:promise/recommended",
+    "plugin:unicorn/recommended",
+    "plugin:sonarjs/recommended-legacy"
+  ],
+  "rules": {
+    // turn off rules that are covered already by others
+    "unicorn/prefer-top-level-await": "off",
+    "unicorn/prevent-abbreviations": "off",
+
+    // comment
+    "spaced-comment": [
+      "error",
+      "always",
+      { "exceptions": ["-"], "markers": ["/"] }
+    ],
+
+    // arrow style functions
+    "arrow-parens": ["error", "as-needed"],
+    "arrow-body-style": ["error", "as-needed"],
+    "no-restricted-syntax": [
+      "error",
+      "FunctionExpression",
+      "FunctionDeclaration"
+    ],
+
+    // line
+    "no-multiple-empty-lines": [
+      "error",
+      { "max": 1, "maxEOF": 0, "maxBOF": 0 }
+    ],
+    "linebreak-style": ["error", "unix"],
+    "eol-last": ["error", "always"],
+
+    // general
+    "prefer-destructuring": ["error"],
+    "quotes": [
+      "error",
+      "single",
+      { "avoidEscape": true, "allowTemplateLiterals": true }
+    ],
+    "comma-dangle": ["error", "never"],
+    "no-console": ["error"],
+
+    // import
+    "import/newline-after-import": ["error", { "count": 1 }],
+    "sort-imports": [
+      "error",
+      { "ignoreCase": true, "ignoreDeclarationSort": true }
+    ],
+    "import/order": [
+      "error",
+      {
+        "groups": ["builtin", "external", "internal", ["parent", "sibling"]],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": false
+        }
+      }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": ["src*", "..*", "./*/", "@/*/"]
+      }
+    ]
+  },
+  "overrides": []
+}
