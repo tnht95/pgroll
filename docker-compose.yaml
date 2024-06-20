@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: roll
+    image: postgres:16.2-bookworm
+    environment:
+      POSTGRES_DB: roll
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+    volumes:
+      - ./data/db:/data/postgres
+    ports:
+      - 5432:5432

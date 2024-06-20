@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "tsx .",
+    "dev": "tsx ./src",
     "build": "tsc",
     "start": "node ./dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "fmt": "prettier --write .",
     "fmtc": "prettier --check .",
     "lint": "eslint . --fix",
-    "lintc": "eslint ."
+    "lintc": "eslint .",
+    "test": "jest"
   },
   "packageManager": "pnpm@9.4.0",
   "engines": {
@@ -23,15 +23,25 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.5",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "eslint": "^8.5.0",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jest": "^28.6.0",
     "eslint-plugin-promise": "^6.2.0",
     "eslint-plugin-sonarjs": "^1.0.3",
     "eslint-plugin-unicorn": "^54.0.0",
+    "jest": "^29.7.0",
     "prettier": "^3.3.2",
+    "ts-jest": "^29.1.5",
+    "tslib": "^2.6.3",
     "tsx": "^4.15.6",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "postgres": "^3.4.4"
   }
 }

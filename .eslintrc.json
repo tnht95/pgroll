@@ -2,7 +2,12 @@
   "parserOptions": {
     "project": "tsconfig.json"
   },
-  "plugins": ["import", "promise", "unicorn", "sonarjs"],
+  "settings": {
+    "import/resolver": {
+      "typescript": {}
+    }
+  },
+  "plugins": ["import", "promise", "unicorn", "sonarjs", "jest"],
   "extends": [
     "prettier",
     "eslint:recommended",
@@ -11,13 +16,15 @@
     "plugin:import/recommended",
     "plugin:promise/recommended",
     "plugin:unicorn/recommended",
-    "plugin:sonarjs/recommended-legacy"
+    "plugin:sonarjs/recommended-legacy",
+    "plugin:jest/recommended"
   ],
   "rules": {
     // turn off rules that are covered already by others
     "unicorn/prefer-top-level-await": "off",
     "unicorn/prevent-abbreviations": "off",
-
+    "no-console": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
     // comment
     "spaced-comment": [
       "error",
@@ -30,7 +37,7 @@
     "arrow-body-style": ["error", "as-needed"],
     "no-restricted-syntax": [
       "error",
-      "FunctionExpression",
+      // "FunctionExpression",
       "FunctionDeclaration"
     ],
 
@@ -50,7 +57,6 @@
       { "avoidEscape": true, "allowTemplateLiterals": true }
     ],
     "comma-dangle": ["error", "never"],
-    "no-console": ["error"],
 
     // import
     "import/newline-after-import": ["error", { "count": 1 }],
