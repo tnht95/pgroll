@@ -10,6 +10,7 @@ export interface IMigrator {
   down: () => Promise<void>;
   create: (name: string) => void;
   go: (version: number) => Promise<void>;
+  getCurrentVersion: () => Promise<number>;
 }
 
 export class Migrator implements IMigrator {

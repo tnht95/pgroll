@@ -1,13 +1,11 @@
-version: '3.8'
-
 services:
   db:
     container_name: roll
     image: postgres:16.2-bookworm
     environment:
-      POSTGRES_DB: roll
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pgroll
+      POSTGRES_USER: pgrolluser
+      POSTGRES_PASSWORD: pgrollpassword
       PGDATA: /data/postgres
     volumes:
       - ./data/db:/data/postgres
