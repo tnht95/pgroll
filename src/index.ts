@@ -23,11 +23,10 @@ export class Migrator implements IMigrator {
   }
 
   async migrationTableInit(): Promise<void> {
-    await this.dbClient`CREATE TABLE IF NOT EXISTS migrations (
+    await this.dbClient`CREATE TABLE IF NOT EXISTS migrations(
                         name varchar(500) PRIMARY KEY,
                         version smallint NOT NULL,
-                        applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                    );`;
+                        applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`;
   }
 
   create(name: string): void {

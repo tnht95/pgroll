@@ -6,8 +6,9 @@ export const getMigrationFiles = (
   dir: string,
   direction: Direction
 ): string[] => {
-  const pattern = new RegExp(`^.*_${direction}.sql$`);
-  const files = fs.readdirSync(dir).filter(file => pattern.test(file));
+  const files = fs
+    .readdirSync(dir)
+    .filter(file => file.endsWith(`_${direction}.sql`));
 
   if (direction == 'up') {
     return files.sort();
