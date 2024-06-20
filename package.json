@@ -1,10 +1,19 @@
 {
   "name": "pgroll",
   "version": "1.0.0",
-  "description": "",
+  "description": "postgres migration",
+  "main": "dist/cjs/src/index.js",
+  "module": "dist/esm/src/index.js",
+  "types": "dist/cjs/src/index.d.ts",
+  "files": [
+    "dist/cjs/src",
+    "dist/esm/src"
+  ],
   "scripts": {
     "dev": "tsx ./src",
-    "build": "tsc",
+    "build-cjs": "tsc -p tsconfig.cjs.json",
+    "build-esm": "tsc -p tsconfig.esm.json",
+    "build": "rm -rf dist && pnpm build-cjs && pnpm build-esm",
     "start": "node ./dist/index.js",
     "fmt": "prettier --write .",
     "fmtc": "prettier --check .",
