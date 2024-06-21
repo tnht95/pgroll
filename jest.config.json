@@ -12,7 +12,6 @@
       "statements": 60
     }
   },
-  "testTimeout": 10000, // 10s
   "moduleNameMapper": {
     "@/(.*)": "<rootDir>/src/$1"
   },

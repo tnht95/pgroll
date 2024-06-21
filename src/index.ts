@@ -110,16 +110,17 @@ export class Migrator implements IMigrator {
           }
         }
       } else {
-        for (const fileName of fileNames) {
-          const id = fileNames.indexOf(fileName);
-          if (id < currentVersion) {
+        // calculate start to know where the down migration starts
+          const start = fileNames.length - currentVersion;
+          for (let i = start; i < fileNames.length; i++) {
+            const file = fileNames[i] ?? '';
             await Promise.all([
-              tx.file(path.join(this.migrationsDir, fileName)).execute(),
-              tx`DELETE FROM migrations WHERE version = ${fileNames.length - id}`
+              tx.file(path.join(this.migrationsDir, file)).execute(),
+              tx`DELETE FROM migrations WHERE version = ${fileNames.length - i}`
             ]);
-            opts?.eventHandler(`Successfully migrated: ${fileName}`);
+            opts?.eventHandler(`Successfully migrated: ${file}`);
           }
-        }
+
       }
       await this.commit(tx);
     } catch (error) {
