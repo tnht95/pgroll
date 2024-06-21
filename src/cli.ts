@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/no-process-exit */
+/* eslint-disable unicorn/no-process-exit, no-console */
 
 import * as process from 'node:process';
 
@@ -6,6 +6,8 @@ import { Command } from 'commander';
 import postgres from 'postgres';
 
 import { IMigrator, Migrator } from '@/index';
+
+import { createFile } from './utils';
 
 const program = new Command();
 
@@ -31,7 +33,8 @@ program
   .description('Run all up migrations')
   .action(async () => {
     try {
-      await migrator.up();
+      await migrator.up({ eventHandler: console.log });
+      console.log('Migrations up completed successfully.');
     } catch (error) {
       console.error('Error during migrations up:', error);
       process.exit(1);
@@ -43,7 +46,8 @@ program
   .description('Run all down migrations')
   .action(async () => {
     try {
-      await migrator.down();
+      await migrator.down({ eventHandler: console.log });
+      console.log('Migrations down completed successfully.');
     } catch (error) {
       console.error('Error during migrations down:', error);
       process.exit(1);
@@ -57,7 +61,9 @@ program
   )
   .argument('<filename>', 'file name to be created')
   .action((fileName: string) => {
-    migrator.create(fileName);
+    const result = createFile(migrator.migrationsDir, fileName);
+    for (const f of result)
+      console.log(`Successfully created migration files: ${f}`);
   });
 
 program
@@ -75,9 +81,9 @@ program
     }
 
     try {
-      await migrator.go(parsedVersion);
+      await migrator.go(parsedVersion, { eventHandler: console.log });
     } catch (error) {
-      console.error(error);
+      console.error('Error during migrations:', error);
       process.exit(1);
     }
   });

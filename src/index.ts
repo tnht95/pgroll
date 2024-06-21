@@ -4,16 +4,21 @@ import { ReservedSql, Sql } from 'postgres';
 
 import { Direction, getMigrationFiles } from '@/utils';
 
+interface Option {
+  eventHandler: (info: string) => void;
+}
+
 export interface IMigrator {
-  up: () => Promise<void>;
-  down: () => Promise<void>;
-  go: (version: number) => Promise<void>;
+  migrationsDir: string;
+  up: (opts?: Option) => Promise<void>;
+  down: (opts?: Option) => Promise<void>;
+  go: (version: number, opts?: Option) => Promise<void>;
   getCurrentVersion: () => Promise<number>;
 }
 
 export class Migrator implements IMigrator {
   private readonly dbClient: Sql;
-  private readonly migrationsDir: string;
+  readonly migrationsDir: string;
 
   constructor(dbClient: Sql, migrationsDir: string) {
     this.dbClient = dbClient;
@@ -28,32 +33,22 @@ export class Migrator implements IMigrator {
   }
 
   async up(): Promise<void> {
-    try {
-      await this.migrate('up');
-      console.log('Migrations up completed successfully.');
-    } catch (error) {
-      console.error('Error during migrations up:', error);
-    }
+    return this.migrate('up');
   }
 
   async down(): Promise<void> {
-    try {
-      await this.migrate('down');
-      console.log('Migrations down completed successfully.');
-    } catch (error) {
-      console.error('Error during migrations down:', error);
-    }
+    return this.migrate('down');
   }
 
-  async go(version: number): Promise<void> {
+  async go(version: number, opts?: Option): Promise<void> {
     const tx = await this.dbClient.reserve();
     try {
       await this.acquireLock(tx);
-      await tx`BEGIN`;
+      await this.begin(tx);
       await this.ensureMigrationTable(tx);
       const currentVersion = await this.getCurrentVersionWithTx(tx);
       if (currentVersion === version) {
-        console.log(`Already at version ${version}`);
+        opts?.eventHandler(`Already at version ${version}`);
         return;
       }
       const direction: Direction = version > currentVersion ? 'up' : 'down';
@@ -66,10 +61,10 @@ export class Migrator implements IMigrator {
             tx.file(path.join(this.migrationsDir, file)).execute(),
             tx`INSERT INTO migrations(name, version) VALUES (${file}, ${i} + 1)`
           ]);
-          console.log(`Successfully migrated: ${file}`);
+          opts?.eventHandler(`Successfully migrated: ${file}`);
         }
         if (version > fileNames.length) {
-          console.log(`Currently at latest version: ${currentVersion}`);
+          opts?.eventHandler(`Currently at latest version: ${currentVersion}`);
         }
       } else {
         // get index of the current file
@@ -82,24 +77,24 @@ export class Migrator implements IMigrator {
             tx.file(path.join(this.migrationsDir, file)).execute(),
             tx`DELETE FROM migrations WHERE version = ${fileNames.length - i}`
           ]);
-          console.log(`Successfully migrated: ${file}`);
+          opts?.eventHandler(`Successfully migrated: ${file}`);
         }
       }
-      await tx`COMMIT`;
+      await this.commit(tx);
     } catch (error) {
-      await tx`ROLLBACK`;
-      console.error('Error during migrations:', error);
+      await this.rollback(tx);
+      throw error;
     } finally {
       await this.releaseLock(tx);
       tx.release();
     }
   }
 
-  async migrate(direction: Direction): Promise<void> {
+  async migrate(direction: Direction, opts?: Option): Promise<void> {
     const tx = await this.dbClient.reserve();
     try {
       await this.acquireLock(tx);
-      await tx`BEGIN`;
+      await this.begin(tx);
       await this.ensureMigrationTable(tx);
       const currentVersion = await this.getCurrentVersionWithTx(tx);
       const fileNames = getMigrationFiles(this.migrationsDir, direction);
@@ -111,7 +106,7 @@ export class Migrator implements IMigrator {
               tx.file(path.join(this.migrationsDir, fileName)).execute(),
               tx`INSERT INTO migrations(name, version) VALUES (${fileName}, ${id} + 1)`
             ]);
-            console.log(`Successfully migrated: ${fileName}`);
+            opts?.eventHandler(`Successfully migrated: ${fileName}`);
           }
         }
       } else {
@@ -120,16 +115,16 @@ export class Migrator implements IMigrator {
           if (id < currentVersion) {
             await Promise.all([
               tx.file(path.join(this.migrationsDir, fileName)).execute(),
-              tx`DELETE FROM migrations WHERE version = ${id} + 1`
+              tx`DELETE FROM migrations WHERE version = ${fileNames.length - id}`
             ]);
-            console.log(`Successfully migrated: ${fileName}`);
+            opts?.eventHandler(`Successfully migrated: ${fileName}`);
           }
         }
       }
-      await tx`COMMIT`;
+      await this.commit(tx);
     } catch (error) {
-      await tx`ROLLBACK`;
-      console.error('Error during migrations:', error);
+      await this.rollback(tx);
+      throw error;
     } finally {
       await this.releaseLock(tx);
       tx.release();
@@ -154,5 +149,17 @@ export class Migrator implements IMigrator {
 
   async releaseLock(tx: ReservedSql): Promise<void> {
     await tx`SELECT pg_advisory_unlock(21421431414441411)`;
+  }
+
+  async begin(tx: ReservedSql): Promise<void> {
+    await tx`BEGIN`;
+  }
+
+  async commit(tx: ReservedSql): Promise<void> {
+    await tx`COMMIT`;
+  }
+
+  async rollback(tx: ReservedSql): Promise<void> {
+    await tx`ROLLBACK`;
   }
 }
