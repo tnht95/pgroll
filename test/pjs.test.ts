@@ -99,6 +99,23 @@ describe('Test Postgres.js client', () => {
     expect(await migrator.getCurrentVersion()).toBe(0);
   });
 
+  test('multiple up & down', async () => {
+    await Promise.all([
+      migrator.up(),
+      migrator.down(),
+      migrator.up(),
+      migrator.down()
+    ]);
+    expect([0, 5]).toContain(await migrator.getCurrentVersion());
+    await Promise.all([
+      migrator.down(),
+      migrator.up(),
+      migrator.down(),
+      migrator.up()
+    ]);
+    expect([0, 5]).toContain(await migrator.getCurrentVersion());
+  });
+
   test('go success', async () => {
     await migrator.down();
     expect(await migrator.getCurrentVersion()).toBe(0);
@@ -152,5 +169,19 @@ describe('Test Postgres.js client', () => {
                            WHERE  table_schema = 'public'   -- Replace with your schema name if different
                            AND    table_name   = 'games');`
     ).toEqual([{ exists: false }]);
+  });
+
+  test('randomly run', async () => {
+    await Promise.all([
+      migrator.up(),
+      migrator.go(1),
+      migrator.down(),
+      migrator.go(4)
+    ]);
+    expect([0, 1, 4, 5]).toContain(await migrator.getCurrentVersion());
+    await Promise.all([migrator.down(), migrator.go(2), migrator.go(4)]);
+    expect([0, 2, 4]).toContain(await migrator.getCurrentVersion());
+    await Promise.all([migrator.up(), migrator.go(3), migrator.go(0)]);
+    expect([0, 3, 5]).toContain(await migrator.getCurrentVersion());
   });
 });

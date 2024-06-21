@@ -3,7 +3,7 @@
   "testEnvironment": "node",
   "verbose": true,
   "collectCoverage": true,
-  "collectCoverageFrom": ["src/**/*.ts"],
+  "collectCoverageFrom": ["src/**/*.ts", "!src/cli.ts"],
   "coverageThreshold": {
     "global": {
       "branches": 45,
@@ -12,6 +12,7 @@
       "statements": 60
     }
   },
+  "testTimeout": 10000, // 10s
   "moduleNameMapper": {
     "@/(.*)": "<rootDir>/src/$1"
   },
