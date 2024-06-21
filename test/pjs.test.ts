@@ -79,13 +79,23 @@ describe('Test Postgres.js client', () => {
 
   test('multiple up', async () => {
     await migrator.down();
-    await Promise.all([migrator.up(), migrator.up()]);
+    await Promise.all([
+      migrator.up(),
+      migrator.up(),
+      migrator.up(),
+      migrator.up()
+    ]);
     expect(await migrator.getCurrentVersion()).toBe(5);
   });
 
   test('multiple down', async () => {
     await migrator.up();
-    await Promise.all([migrator.down(), migrator.down()]);
+    await Promise.all([
+      migrator.down(),
+      migrator.down(),
+      migrator.down(),
+      migrator.down()
+    ]);
     expect(await migrator.getCurrentVersion()).toBe(0);
   });
 

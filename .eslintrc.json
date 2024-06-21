@@ -23,7 +23,8 @@
     // turn off rules that are covered already by others
     "unicorn/prefer-top-level-await": "off",
     "unicorn/prevent-abbreviations": "off",
-    "no-console": "off",
+    "no-console": "error",
+
     "@typescript-eslint/restrict-template-expressions": "off",
     // comment
     "spaced-comment": [

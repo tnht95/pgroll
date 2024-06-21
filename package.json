@@ -10,7 +10,7 @@
     "dist/esm/src"
   ],
   "scripts": {
-    "dev": "tsx ./src",
+    "dev": "tsx ./src/cli.ts",
     "build-cjs": "tsc -p tsconfig.cjs.json",
     "build-esm": "tsc -p tsconfig.esm.json",
     "build": "rm -rf dist && pnpm build-cjs && pnpm build-esm",

@@ -5,13 +5,26 @@ import * as process from 'node:process';
 import { Command } from 'commander';
 import postgres from 'postgres';
 
-import { Migrator } from '@/index';
+import { IMigrator, Migrator } from '@/index';
 
 const program = new Command();
 
-const migrator = new Migrator(postgres(), `${process.cwd()}/migrations`);
+let migrator: IMigrator;
 
-program.version('1.0.0').description('Database migration tool');
+program
+  .version('0.0.1')
+  .description('Database migration tool')
+  .option(
+    '-d, --migrationDir <filepath>',
+    'Specify migration directory(Default: ./migration)'
+  )
+  .hook('preAction', cmd => {
+    const opts = cmd.opts<{ migrationDir: string }>();
+    migrator = new Migrator(
+      postgres(),
+      opts.migrationDir || `${process.cwd()}/migrations`
+    );
+  });
 
 program
   .command('up')
