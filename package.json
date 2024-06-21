@@ -1,6 +1,6 @@
 {
   "name": "pgroll",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "postgres migration",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
@@ -51,6 +51,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "commander": "^12.1.0",
     "postgres": "^3.4.4"
   }
 }

@@ -47,12 +47,8 @@ export class Migrator implements IMigrator {
   }
 
   async down(): Promise<void> {
-    try {
-      await this.migrate('down');
-      console.log('Migrations down completed successfully.');
-    } catch (error) {
-      console.error('Error during migrations down:', error);
-    }
+    await this.migrate('down');
+    console.log('Migrations down completed successfully.');
   }
 
   async go(version: number): Promise<void> {
@@ -93,20 +89,14 @@ export class Migrator implements IMigrator {
           }
         }
       });
-    } catch (error) {
-      console.error('Error during migrations:', error);
     } finally {
       await this.releaseLock();
     }
   }
 
   async up(): Promise<void> {
-    try {
-      await this.migrate('up');
-      console.log('Migrations up completed successfully.');
-    } catch (error) {
-      console.error('Error during migrations up:', error);
-    }
+    await this.migrate('up');
+    console.log('Migrations up completed successfully.');
   }
 
   async getCurrentVersion(): Promise<number> {
