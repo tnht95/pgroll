@@ -128,13 +128,6 @@ export default [
             caseInsensitive: false
           }
         }
-      ],
-
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: ['src*', '..*', './*/', '@/*/']
-        }
       ]
     }
   }

@@ -5,9 +5,9 @@ import * as process from 'node:process';
 import { Command } from 'commander';
 import postgres from 'postgres';
 
-import { IMigrator, Migrator } from '@/index';
-
 import { createFile } from './utils';
+
+import { IMigrator, Migrator } from './index';
 
 const program = new Command();
 

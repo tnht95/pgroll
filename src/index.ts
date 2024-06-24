@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import { ReservedSql, Sql } from 'postgres';
 
-import { Direction, getMigrationFiles } from '@/utils';
+import { Direction, getMigrationFiles } from './utils';
 
 interface Option {
   eventHandler: (info: string) => void;

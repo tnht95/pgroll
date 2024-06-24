@@ -1,6 +1,6 @@
 import postgres, { Sql } from 'postgres';
 
-import { IMigrator, Migrator } from '@/index';
+import { IMigrator, Migrator } from '../src';
 
 describe('Test Postgres.js client', () => {
   let dbCLient: Sql;
