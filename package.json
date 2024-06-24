@@ -1,6 +1,6 @@
 {
   "name": "pgroll",
-  "version": "0.0.7",
+  "version": "0.0.6",
   "description": "Postgres migration tool",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
@@ -34,7 +34,8 @@
     "fmtc": "prettier --check .",
     "lint": "eslint . --fix",
     "lintc": "eslint .",
-    "test": "jest"
+    "test": "jest",
+    "pp": "node update-version && pnpm build && npm publish --access=public"
   },
   "packageManager": "pnpm@9.4.0",
   "engines": {
