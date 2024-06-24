@@ -22,10 +22,7 @@ program
   )
   .hook('preAction', cmd => {
     const opts = cmd.opts<{ migrationDir: string }>();
-    migrator = new Migrator(
-      postgres(),
-      opts.migrationDir || `${process.cwd()}/migrations`
-    );
+    migrator = new Migrator(postgres(), opts.migrationDir);
   });
 
 program

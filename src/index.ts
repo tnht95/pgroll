@@ -20,9 +20,9 @@ export class Migrator implements IMigrator {
   private readonly dbClient: Sql;
   readonly migrationsDir: string;
 
-  constructor(dbClient: Sql, migrationsDir: string) {
+  constructor(dbClient: Sql, migrationsDir = '') {
     this.dbClient = dbClient;
-    this.migrationsDir = migrationsDir;
+    this.migrationsDir = migrationsDir || `${process.cwd()}/migrations`;
   }
 
   async ensureMigrationTable(tx: ReservedSql): Promise<void> {
@@ -111,16 +111,15 @@ export class Migrator implements IMigrator {
         }
       } else {
         // calculate start to know where the down migration starts
-          const start = fileNames.length - currentVersion;
-          for (let i = start; i < fileNames.length; i++) {
-            const file = fileNames[i] ?? '';
-            await Promise.all([
-              tx.file(path.join(this.migrationsDir, file)).execute(),
-              tx`DELETE FROM migrations WHERE version = ${fileNames.length - i}`
-            ]);
-            opts?.eventHandler(`Successfully migrated: ${file}`);
-          }
-
+        const start = fileNames.length - currentVersion;
+        for (let i = start; i < fileNames.length; i++) {
+          const file = fileNames[i] ?? '';
+          await Promise.all([
+            tx.file(path.join(this.migrationsDir, file)).execute(),
+            tx`DELETE FROM migrations WHERE version = ${fileNames.length - i}`
+          ]);
+          opts?.eventHandler(`Successfully migrated: ${file}`);
+        }
       }
       await this.commit(tx);
     } catch (error) {
