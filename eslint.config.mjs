@@ -20,7 +20,13 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['eslint.config.mjs', 'dist', 'coverage', 'data']
+    ignores: [
+      'update-version.js',
+      'eslint.config.mjs',
+      'dist',
+      'coverage',
+      'data'
+    ]
   },
   ...fixupConfigRules(
     compat.extends(

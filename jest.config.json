@@ -12,8 +12,5 @@
       "statements": 60
     }
   },
-  "moduleNameMapper": {
-    "@/(.*)": "<rootDir>/src/$1"
-  },
   "coverageReporters": ["clover", "json", "lcov", "text"]
 }
