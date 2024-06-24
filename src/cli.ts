@@ -18,7 +18,7 @@ program
   .description('Database migration tool')
   .option(
     '-d, --migrationDir <filepath>',
-    'Specify migration directory(Default: ./migration)'
+    'Specify migration directory(Default: ./migrations)'
   )
   .hook('preAction', cmd => {
     const opts = cmd.opts<{ migrationDir: string }>();
@@ -32,6 +32,7 @@ program
     try {
       await migrator.up({ eventHandler: console.log });
       console.log('Migrations up completed successfully.');
+      process.exit(0);
     } catch (error) {
       console.error('Error during migrations up:', error);
       process.exit(1);
@@ -45,6 +46,7 @@ program
     try {
       await migrator.down({ eventHandler: console.log });
       console.log('Migrations down completed successfully.');
+      process.exit(0);
     } catch (error) {
       console.error('Error during migrations down:', error);
       process.exit(1);
@@ -61,6 +63,7 @@ program
     const result = createFile(migrator.migrationsDir, fileName);
     for (const f of result)
       console.log(`Successfully created migration files: ${f}`);
+    process.exit(0);
   });
 
 program
@@ -79,6 +82,7 @@ program
 
     try {
       await migrator.go(parsedVersion, { eventHandler: console.log });
+      process.exit(0);
     } catch (error) {
       console.error('Error during migrations:', error);
       process.exit(1);

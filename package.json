@@ -1,6 +1,6 @@
 {
   "name": "pgroll",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Postgres migration tool",
   "main": "dist/cjs/src/index.js",
   "module": "dist/esm/src/index.js",
