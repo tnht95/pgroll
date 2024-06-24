@@ -45,10 +45,13 @@
   },
   "license": "ISC",
   "devDependencies": {
+    "@eslint/compat": "^1.1.0",
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.5.0",
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.14.5",
+    "@types/node": "^20.14.8",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "eslint": "^8.5.0",
+    "eslint": "^9.5.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
@@ -60,11 +63,11 @@
     "prettier": "^3.3.2",
     "ts-jest": "^29.1.5",
     "tslib": "^2.6.3",
-    "tsx": "^4.15.6",
-    "typescript": "^5.4.5"
+    "typescript": "=5.4.5"
   },
   "dependencies": {
     "commander": "^12.1.0",
-    "postgres": "^3.4.4"
+    "postgres": "^3.4.4",
+    "tsx": "^4.15.7"
   }
 }

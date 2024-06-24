@@ -1,9 +1,10 @@
-# 
+#
+
 # pgroll
 
 `pgroll` is a lightweight and flexible database migration tool for PostgreSQL
 
-PostgreSQL clients currently supporting:  
+PostgreSQL clients currently supporting:
 
 - [x] PostgresJS
 - [ ] pg
@@ -27,10 +28,13 @@ npm install pgroll
 ```
 
 ## Usage
+
 ### Command Line Interface (CLI)
+
 `pgroll` provides a CLI to manage your database migrations. Below are the available commands:
 
 #### Running the CLI
+
 1. Run Migrations Up:
 
 ```bash
@@ -48,6 +52,7 @@ npx pgroll down
 ```bash
 npx pgroll go <version>
 ```
+
 4. Create New Migration Files:
 
 ```bash
