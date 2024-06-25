@@ -35,7 +35,7 @@
     "lint": "eslint . --fix",
     "lintc": "eslint .",
     "test": "jest",
-    "pp": "node update-version && pnpm build && npm publish --access=public"
+    "pp": "pnpm build && node update-version && npm publish --access=public"
   },
   "packageManager": "pnpm@9.4.0",
   "engines": {
