@@ -2,7 +2,7 @@
 
 # pgroll
 
-`pgroll` is a lightweight and flexible database migration tool for PostgreSQL
+`pgroll` is a thread-safe, lightweight and flexible database migration tool for PostgreSQL
 
 PostgreSQL clients currently supporting:
 
