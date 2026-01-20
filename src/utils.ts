@@ -11,9 +11,9 @@ export const getMigrationFiles = (
     .readdirSync(dir)
     .filter(file => file.endsWith(`_${direction}.sql`));
   if (direction == 'up') {
-    return files.sort();
+    return files.toSorted((a, b) => a.localeCompare(b));
   }
-  return files.sort((a, b) => b.localeCompare(a));
+  return files.toSorted((a, b) => b.localeCompare(a));
 };
 
 export const createFolderIfNotExists = (filePath: string) => {

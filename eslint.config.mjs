@@ -1,70 +1,41 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-import { fixupConfigRules, fixupPluginRules } from '@eslint/compat';
-import { FlatCompat } from '@eslint/eslintrc';
-import js from '@eslint/js';
-import _import from 'eslint-plugin-import';
-import jest from 'eslint-plugin-jest';
-import promise from 'eslint-plugin-promise';
-import sonarjs from 'eslint-plugin-sonarjs';
-import unicorn from 'eslint-plugin-unicorn';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all
-});
+import pluginJs from '@eslint/js';
+import pluginPrettier from 'eslint-config-prettier/flat';
+import pluginImport from 'eslint-plugin-import';
+import pluginJest from 'eslint-plugin-jest';
+import pluginPromise from 'eslint-plugin-promise';
+import pluginSonarjs from 'eslint-plugin-sonarjs';
+import pluginUnicorn from 'eslint-plugin-unicorn';
+import pluginTs from 'typescript-eslint';
 
 export default [
   {
-    ignores: [
-      'update-version.js',
-      'eslint.config.mjs',
-      'dist',
-      'coverage',
-      'data'
-    ]
+    ignores: ['update-version.js', 'dist', 'coverage', 'data']
   },
-  ...fixupConfigRules(
-    compat.extends(
-      'prettier',
-      'eslint:recommended',
-      'plugin:@typescript-eslint/strict-type-checked',
-      'plugin:@typescript-eslint/stylistic-type-checked',
-      'plugin:import/recommended',
-      'plugin:promise/recommended',
-      'plugin:unicorn/recommended',
-      'plugin:sonarjs/recommended-legacy',
-      'plugin:jest/recommended'
-    )
-  ),
   {
-    plugins: {
-      import: fixupPluginRules(_import),
-      promise: fixupPluginRules(promise),
-      unicorn: fixupPluginRules(unicorn),
-      sonarjs: fixupPluginRules(sonarjs),
-      jest: fixupPluginRules(jest)
-    },
-
     languageOptions: {
       ecmaVersion: 5,
       sourceType: 'script',
-
       parserOptions: {
         project: 'tsconfig.json'
       }
     },
-
     settings: {
       'import/resolver': {
         typescript: {}
       }
-    },
-
+    }
+  },
+  pluginJs.configs.recommended,
+  ...pluginTs.configs.strictTypeChecked,
+  ...pluginTs.configs.stylisticTypeChecked,
+  pluginPrettier,
+  pluginImport.flatConfigs.recommended,
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  pluginPromise.configs['flat/recommended'], // fix soon
+  pluginSonarjs.configs.recommended,
+  pluginUnicorn.configs.recommended,
+  pluginJest.configs['flat/recommended'],
+  {
     rules: {
       'unicorn/prefer-top-level-await': 'off',
       'unicorn/prevent-abbreviations': 'off',
@@ -135,6 +106,12 @@ export default [
           }
         }
       ]
+    }
+  },
+  {
+    files: ['test/**/*.test.ts'],
+    rules: {
+      'sonarjs/no-hardcoded-passwords': 'off' // eslint-disable-line sonarjs/no-hardcoded-passwords
     }
   }
 ];
