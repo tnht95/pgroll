@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: roll
+    container_name: pgroll
     image: postgres:16.2-bookworm
     environment:
       POSTGRES_DB: pgroll

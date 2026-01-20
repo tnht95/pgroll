@@ -56,5 +56,5 @@ npx pgroll go <version>
 4. Create New Migration Files:
 
 ```bash
-npx roll create <migration-name>
+npx pgroll create <migration-name>
 ```
