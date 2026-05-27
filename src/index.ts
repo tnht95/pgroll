@@ -1,8 +1,8 @@
 import path from 'node:path';
 
-import { ReservedSql, Sql } from 'postgres';
+import { type ReservedSql, type Sql } from 'postgres';
 
-import { Direction, getMigrationFiles } from './utils';
+import { type Direction, getMigrationFiles } from './utils.ts';
 
 interface Option {
   eventHandler: (info: string) => void;
@@ -132,14 +132,12 @@ export class Migrator implements IMigrator {
   }
 
   async getCurrentVersion(): Promise<number> {
-    const result = await this
-      .dbClient`SELECT version FROM migrations ORDER BY version DESC LIMIT 1`;
+    const result = await this.dbClient`SELECT version FROM migrations ORDER BY version DESC LIMIT 1`;
     return result.length > 0 ? (result[0]?.['version'] as number) : 0;
   }
 
   async getCurrentVersionWithTx(tx: ReservedSql): Promise<number> {
-    const result =
-      await tx`SELECT version FROM migrations ORDER BY version DESC LIMIT 1`;
+    const result = await tx`SELECT version FROM migrations ORDER BY version DESC LIMIT 1`;
     return result.length > 0 ? (result[0]?.['version'] as number) : 0;
   }
 

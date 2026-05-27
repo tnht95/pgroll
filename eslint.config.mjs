@@ -1,27 +1,33 @@
 import pluginJs from '@eslint/js';
+import pluginVitest from '@vitest/eslint-plugin';
 import pluginPrettier from 'eslint-config-prettier/flat';
-import pluginImport from 'eslint-plugin-import';
-import pluginJest from 'eslint-plugin-jest';
+import pluginImport from 'eslint-plugin-import-x';
 import pluginPromise from 'eslint-plugin-promise';
 import pluginSonarjs from 'eslint-plugin-sonarjs';
 import pluginUnicorn from 'eslint-plugin-unicorn';
+import globals from 'globals';
 import pluginTs from 'typescript-eslint';
 
 export default [
   {
-    ignores: ['update-version.js', 'dist', 'coverage', 'data']
+    ignores: ['update-version.ts', 'dist', 'coverage', 'data']
   },
   {
     languageOptions: {
-      ecmaVersion: 5,
-      sourceType: 'script',
+      globals: globals.node,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       parserOptions: {
-        project: 'tsconfig.json'
+        projectService: {
+          allowDefaultProject: ['eslint.config.mjs']
+        },
+        tsconfigRootDir: import.meta.dirname
       }
     },
     settings: {
-      'import/resolver': {
-        typescript: {}
+      'import-x/resolver': {
+        typescript: true,
+        node: true
       }
     }
   },
@@ -34,7 +40,6 @@ export default [
   pluginPromise.configs['flat/recommended'], // fix soon
   pluginSonarjs.configs.recommended,
   pluginUnicorn.configs.recommended,
-  pluginJest.configs['flat/recommended'],
   {
     rules: {
       'unicorn/prefer-top-level-await': 'off',
@@ -79,7 +84,7 @@ export default [
 
       'comma-dangle': ['error', 'never'],
 
-      'import/newline-after-import': [
+      'import-x/newline-after-import': [
         'error',
         {
           count: 1
@@ -94,7 +99,7 @@ export default [
         }
       ],
 
-      'import/order': [
+      'import-x/order': [
         'error',
         {
           groups: ['builtin', 'external', 'internal', ['parent', 'sibling']],
@@ -108,10 +113,26 @@ export default [
       ]
     }
   },
+
+  // vitest test files
   {
-    files: ['test/**/*.test.ts'],
+    files: ['__tests__/**/*.{js,ts}', '**/*.test.{js,ts}'],
+    ...pluginVitest.configs.recommended,
+    languageOptions: {
+      globals: { ...globals.node, ...pluginVitest.environments.env.globals }
+    },
     rules: {
-      'sonarjs/no-hardcoded-passwords': 'off' // eslint-disable-line sonarjs/no-hardcoded-passwords
+      ...pluginVitest.configs.recommended.rules,
+      'sonarjs/no-duplicate-string': 'off',
+      'sonarjs/no-hardcoded-passwords': 'off'
+    }
+  },
+
+  // skip export default rules for config files
+  {
+    files: ['eslint.config.mjs', 'vitest.config.ts'],
+    rules: {
+      'no-restricted-syntax': ['error', 'FunctionExpression', 'FunctionDeclaration']
     }
   }
 ];

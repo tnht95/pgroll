@@ -1,6 +1,6 @@
-import postgres, { Sql } from 'postgres';
+import postgres, { type Sql } from 'postgres';
 
-import { IMigrator, Migrator } from '../src';
+import { type IMigrator, Migrator } from '../src/index.js';
 
 describe('Test Postgres.js client', () => {
   let dbCLient: Sql;
@@ -79,40 +79,20 @@ describe('Test Postgres.js client', () => {
 
   test('multiple up', async () => {
     await migrator.down();
-    await Promise.all([
-      migrator.up(),
-      migrator.up(),
-      migrator.up(),
-      migrator.up()
-    ]);
+    await Promise.all([migrator.up(), migrator.up(), migrator.up(), migrator.up()]);
     expect(await migrator.getCurrentVersion()).toBe(5);
   });
 
   test('multiple down', async () => {
     await migrator.up();
-    await Promise.all([
-      migrator.down(),
-      migrator.down(),
-      migrator.down(),
-      migrator.down()
-    ]);
+    await Promise.all([migrator.down(), migrator.down(), migrator.down(), migrator.down()]);
     expect(await migrator.getCurrentVersion()).toBe(0);
   });
 
   test('multiple up & down', async () => {
-    await Promise.all([
-      migrator.up(),
-      migrator.down(),
-      migrator.up(),
-      migrator.down()
-    ]);
+    await Promise.all([migrator.up(), migrator.down(), migrator.up(), migrator.down()]);
     expect([0, 5]).toContain(await migrator.getCurrentVersion());
-    await Promise.all([
-      migrator.down(),
-      migrator.up(),
-      migrator.down(),
-      migrator.up()
-    ]);
+    await Promise.all([migrator.down(), migrator.up(), migrator.down(), migrator.up()]);
     expect([0, 5]).toContain(await migrator.getCurrentVersion());
   });
 
@@ -172,12 +152,7 @@ describe('Test Postgres.js client', () => {
   });
 
   test('randomly run', async () => {
-    await Promise.all([
-      migrator.up(),
-      migrator.go(1),
-      migrator.down(),
-      migrator.go(4)
-    ]);
+    await Promise.all([migrator.up(), migrator.go(1), migrator.down(), migrator.go(4)]);
     expect([0, 1, 4, 5]).toContain(await migrator.getCurrentVersion());
     await Promise.all([migrator.down(), migrator.go(2), migrator.go(4)]);
     expect([0, 2, 4]).toContain(await migrator.getCurrentVersion());

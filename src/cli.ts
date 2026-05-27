@@ -1,35 +1,31 @@
-/* eslint-disable unicorn/no-process-exit, no-console */
+#!/usr/bin/env node
+/* eslint-disable no-console */
 
 import * as process from 'node:process';
 
 import { Command } from 'commander';
 import postgres from 'postgres';
 
-import { createFile } from './utils';
-
-import { IMigrator, Migrator } from './index';
+import { type IMigrator, Migrator } from './index.ts';
+import { createFile } from './utils.ts';
 
 const program = new Command();
 
 let migrator: IMigrator;
 
 program
-  .version('0.0.1')
+  .version('0.0.9')
   .description('Database migration tool')
-  .option(
-    '-d, --migrationDir <filepath>',
-    'Specify migration directory(Default: ./migrations)'
-  )
+  .option('-d, --migrationDir <filepath>', 'Specify migration directory(Default: ./migrations)')
+  .option('-u, --url <url>', 'PostgreSQL connection URL (overrides PG* env vars)')
   .hook('preAction', cmd => {
-    const opts = cmd.opts<{ migrationDir: string }>();
-    migrator = new Migrator(
-      postgres({
-        onnotice: () => {
-          // do nothing
-        }
-      }),
-      opts.migrationDir
-    );
+    const opts = cmd.opts<{ migrationDir?: string; url?: string }>();
+    const pgOptions = {
+      onnotice: () => {
+        // do nothing
+      }
+    };
+    migrator = new Migrator(opts.url ? postgres(opts.url, pgOptions) : postgres(pgOptions), opts.migrationDir);
   });
 
 program
@@ -68,16 +64,13 @@ program
   .argument('<filename>', 'file name to be created')
   .action((fileName: string) => {
     const result = createFile(migrator.migrationsDir, fileName);
-    for (const f of result)
-      console.log(`Successfully created migration files: ${f}`);
+    for (const f of result) console.log(`Successfully created migration files: ${f}`);
     process.exit(0);
   });
 
 program
   .command('go')
-  .description(
-    'Navigate to a specific version; version 0 performs a rollback, reverting all migrations.'
-  )
+  .description('Navigate to a specific version; version 0 performs a rollback, reverting all migrations.')
   .argument('<version>', 'version to migrate to')
   .action(async (version: string) => {
     const parsedVersion = Number.parseInt(version, 10);

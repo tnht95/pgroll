@@ -1,7 +1,7 @@
 services:
   db:
     container_name: pgroll
-    image: postgres:16.2-bookworm
+    image: postgres:18.4-bookworm
     environment:
       POSTGRES_DB: pgroll
       POSTGRES_USER: pgrolluser
@@ -9,5 +9,4 @@ services:
       PGDATA: /data/postgres
     volumes:
       - ./data/db:/data/postgres
-    ports:
-      - 5432:5432
+    network_mode: host

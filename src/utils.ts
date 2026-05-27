@@ -3,14 +3,9 @@ import path from 'node:path';
 
 export type Direction = 'up' | 'down';
 
-export const getMigrationFiles = (
-  dir: string,
-  direction: Direction
-): string[] => {
-  const files = fs
-    .readdirSync(dir)
-    .filter(file => file.endsWith(`_${direction}.sql`));
-  if (direction == 'up') {
+export const getMigrationFiles = (dir: string, direction: Direction): string[] => {
+  const files = fs.readdirSync(dir).filter(file => file.endsWith(`_${direction}.sql`));
+  if (direction === 'up') {
     return files.toSorted((a, b) => a.localeCompare(b));
   }
   return files.toSorted((a, b) => b.localeCompare(a));
