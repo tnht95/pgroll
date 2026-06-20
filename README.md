@@ -94,12 +94,13 @@ pgroll [global options] <command>
 
 ### Global options
 
-| Option                      | Description                                                     |
-| --------------------------- | --------------------------------------------------------------- |
-| `-d, --migrationDir <path>` | Directory holding the migration files (default `./migrations`). |
-| `-u, --url <url>`           | PostgreSQL connection URL (overrides `PG*` env vars).           |
-| `-V, --version`             | Print the `pgroll` version.                                     |
-| `-h, --help`                | Show help.                                                      |
+| Option                      | Description                                                      |
+| --------------------------- | ---------------------------------------------------------------  |
+| `-d, --migrationDir <path>` | Directory holding the migration files (default: `./migrations`). |
+| `-u, --url <url>`           | PostgreSQL connection URL (overrides `PG*` env vars).            |
+| `-s, --schema <schema>`     | Schema for pgroll's internal migrations table (default: public). |
+| `-V, --version`             | Print the `pgroll` version.                                      |
+| `-h, --help`                | Show help.                                                       |
 
 ### Commands
 
