@@ -16,16 +16,17 @@ let migrator: IMigrator;
 program
   .version('0.0.9')
   .description('Database migration tool')
-  .option('-d, --migrationDir <filepath>', 'Specify migration directory(Default: ./migrations)')
+  .option('-d, --migrationDir <filepath>', 'Specify migration directory (Default: ./migrations)')
   .option('-u, --url <url>', 'PostgreSQL connection URL (overrides PG* env vars)')
+  .option('-s, --schema <schema>', 'Specify schema (Default: public)')
   .hook('preAction', cmd => {
-    const opts = cmd.opts<{ migrationDir?: string; url?: string }>();
+    const opts = cmd.opts<{ migrationDir?: string; url?: string; schema?: string }>();
     const pgOptions = {
       onnotice: () => {
         // do nothing
       }
     };
-    migrator = new Migrator(opts.url ? postgres(opts.url, pgOptions) : postgres(pgOptions), opts.migrationDir);
+    migrator = new Migrator(opts.url ? postgres(opts.url, pgOptions) : postgres(pgOptions), opts.migrationDir, opts.schema);
   });
 
 program
