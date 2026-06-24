@@ -26,7 +26,11 @@ program
         // do nothing
       }
     };
-    migrator = new Migrator(opts.url ? postgres(opts.url, pgOptions) : postgres(pgOptions), opts.migrationDir, opts.schema);
+    migrator = new Migrator(
+      opts.url ? postgres(opts.url, pgOptions) : postgres(pgOptions),
+      opts.migrationDir,
+      opts.schema
+    );
   });
 
 program
