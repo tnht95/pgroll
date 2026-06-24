@@ -73,9 +73,9 @@ program
   .description('Navigate to a specific version; version 0 performs a rollback, reverting all migrations.')
   .argument('<version>', 'version to migrate to')
   .action(async (version: string) => {
-    const parsedVersion = Number.parseInt(version, 10);
+    const parsedVersion = Number(version);
 
-    if (Number.isNaN(parsedVersion)) {
+    if (!Number.isSafeInteger(parsedVersion) || parsedVersion < 0) {
       console.error('Invalid version number.');
       process.exit(1);
     }

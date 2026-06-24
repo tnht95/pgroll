@@ -46,6 +46,8 @@ export default [
       'unicorn/prevent-abbreviations': 'off',
       'no-console': 'error',
       '@typescript-eslint/restrict-template-expressions': 'off',
+      'unicorn/no-top-level-assignment-in-function': 'off',
+      'unicorn/name-replacements': 'off',
 
       'spaced-comment': [
         'error',
