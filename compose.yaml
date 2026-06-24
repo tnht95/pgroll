@@ -9,4 +9,6 @@ services:
       PGDATA: /data/postgres
     volumes:
       - ./data/db:/data/postgres
-    network_mode: host
+    ports:
+      - 5432:5432
+    # network_mode: host
