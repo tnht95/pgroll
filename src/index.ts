@@ -22,14 +22,15 @@ export class Migrator implements IMigrator {
   readonly migrationsDir: string;
   readonly schema: string;
 
-  constructor(dbClient: Sql, migrationsDir = '', schema = '') {
+  constructor(dbClient: Sql, migrationsDir = '', schema = 'public') {
     this.dbClient = dbClient;
     this.migrationsDir = migrationsDir || `${process.cwd()}/migrations`;
-    this.schema = schema ?? "public";
+    this.schema = schema;
   }
 
   async ensureMigrationTable(tx: ReservedSql): Promise<void> {
-    await tx`CREATE TABLE IF NOT EXISTS ${this.schema}.migrations(
+    await tx`CREATE SCHEMA IF NOT EXISTS ${tx(this.schema)}`;
+    await tx`CREATE TABLE IF NOT EXISTS ${tx(this.schema)}.migrations(
                         name varchar(500) PRIMARY KEY,
                         version smallint NOT NULL,
                         applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`;
@@ -60,8 +61,8 @@ export class Migrator implements IMigrator {
         const fileVersion = Math.min(fileNames.length, version);
         for (let i = currentVersion; i < fileVersion; i++) {
           const file = fileNames[i] ?? '';
-          await  tx.file(path.join(this.migrationsDir, file)).execute();
-          await  tx`INSERT INTO ${this.schema}.migrations(name, version) VALUES (${file}, ${i} + 1)`;
+          await tx.file(path.join(this.migrationsDir, file)).execute();
+          await tx`INSERT INTO ${tx(this.schema)}.migrations(name, version) VALUES (${file}, ${i} + 1)`;
           opts?.eventHandler(`Successfully migrated: ${file}`);
         }
         if (version > fileNames.length) {
@@ -75,7 +76,7 @@ export class Migrator implements IMigrator {
         for (let i = start; i < end; i++) {
           const file = fileNames[i] ?? '';
           await tx.file(path.join(this.migrationsDir, file)).execute();
-          await tx`DELETE FROM ${this.schema}.migrations WHERE version = ${fileNames.length - i}`;
+          await tx`DELETE FROM ${tx(this.schema)}.migrations WHERE version = ${fileNames.length - i}`;
           opts?.eventHandler(`Successfully migrated: ${file}`);
         }
       }
@@ -101,8 +102,8 @@ export class Migrator implements IMigrator {
         for (const fileName of fileNames) {
           const id = fileNames.indexOf(fileName);
           if (id >= currentVersion) {
-            await  tx.file(path.join(this.migrationsDir, fileName)).execute();
-            await  tx`INSERT INTO ${this.schema}.migrations(name, version) VALUES (${fileName}, ${id} + 1)`;
+            await tx.file(path.join(this.migrationsDir, fileName)).execute();
+            await tx`INSERT INTO ${tx(this.schema)}.migrations(name, version) VALUES (${fileName}, ${id} + 1)`;
             opts?.eventHandler(`Successfully migrated: ${fileName}`);
           }
         }
@@ -111,8 +112,8 @@ export class Migrator implements IMigrator {
         const start = fileNames.length - currentVersion;
         for (let i = start; i < fileNames.length; i++) {
           const file = fileNames[i] ?? '';
-          await  tx.file(path.join(this.migrationsDir, file)).execute();
-          await  tx`DELETE FROM ${this.schema}.migrations WHERE version = ${fileNames.length - i}`;
+          await tx.file(path.join(this.migrationsDir, file)).execute();
+          await tx`DELETE FROM ${tx(this.schema)}.migrations WHERE version = ${fileNames.length - i}`;
           opts?.eventHandler(`Successfully migrated: ${file}`);
         }
       }
@@ -127,12 +128,13 @@ export class Migrator implements IMigrator {
   }
 
   async getCurrentVersion(): Promise<number> {
-    const result = await this.dbClient`SELECT version FROM ${this.schema}.migrations ORDER BY version DESC LIMIT 1`;
+    const result = await this
+      .dbClient`SELECT version FROM ${this.dbClient(this.schema)}.migrations ORDER BY version DESC LIMIT 1`;
     return result.length > 0 ? (result[0]?.['version'] as number) : 0;
   }
 
   async getCurrentVersionWithTx(tx: ReservedSql): Promise<number> {
-    const result = await tx`SELECT version FROM ${this.schema}.migrations ORDER BY version DESC LIMIT 1`;
+    const result = await tx`SELECT version FROM ${tx(this.schema)}.migrations ORDER BY version DESC LIMIT 1`;
     return result.length > 0 ? (result[0]?.['version'] as number) : 0;
   }
 
