@@ -53,6 +53,7 @@ export class Migrator implements IMigrator {
       const currentVersion = await this.getCurrentVersionWithTx(tx);
       if (currentVersion === version) {
         opts?.eventHandler(`Already at version ${version}`);
+        await this.commit(tx);
         return;
       }
       const direction: Direction = version > currentVersion ? 'up' : 'down';
