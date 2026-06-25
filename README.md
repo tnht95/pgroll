@@ -94,12 +94,13 @@ pgroll [global options] <command>
 
 ### Global options
 
-| Option                      | Description                                                     |
-| --------------------------- | --------------------------------------------------------------- |
-| `-d, --migrationDir <path>` | Directory holding the migration files (default `./migrations`). |
-| `-u, --url <url>`           | PostgreSQL connection URL (overrides `PG*` env vars).           |
-| `-V, --version`             | Print the `pgroll` version.                                     |
-| `-h, --help`                | Show help.                                                      |
+| Option                      | Description                                                        |
+| --------------------------- | ------------------------------------------------------------------ |
+| `-d, --migrationDir <path>` | Directory holding the migration files (default: `./migrations`).   |
+| `-u, --url <url>`           | PostgreSQL connection URL (overrides `PG*` env vars).              |
+| `-s, --schema <schema>`     | Schema for pgroll's internal migrations table (default: `public`). |
+| `-V, --version`             | Print the `pgroll` version.                                        |
+| `-h, --help`                | Show help.                                                         |
 
 ### Commands
 
@@ -159,12 +160,13 @@ await migrator.go(0, { eventHandler: info => console.log(info) });
 await sql.end();
 ```
 
-### `new Migrator(dbClient, migrationsDir?)`
+### `new Migrator(dbClient, migrationsDir?, schema?)`
 
-| Parameter       | Type                | Description                                                   |
-| --------------- | ------------------- | ------------------------------------------------------------- |
-| `dbClient`      | `Sql` (PostgresJS)  | A `postgres` client instance.                                 |
-| `migrationsDir` | `string` (optional) | Directory of migration files. Defaults to `<cwd>/migrations`. |
+| Parameter       | Type                | Description                                                          |
+| --------------- | ------------------- | -------------------------------------------------------------------- |
+| `dbClient`      | `Sql` (PostgresJS)  | A `postgres` client instance.                                        |
+| `migrationsDir` | `string` (optional) | Directory of migration files. Defaults to `<cwd>/migrations`.        |
+| `schema`        | `string` (optional) | Schema for pgroll's internal migrations table. Defaults to `public`. |
 
 ### Methods
 
@@ -180,10 +182,12 @@ human-readable message as each migration is applied.
 
 ## How it works
 
-On the first run, `pgroll` creates a bookkeeping table:
+On the first run, `pgroll` creates a bookkeeping table in the configured schema (default
+`public`, override with `-s, --schema`). All references to it are schema-qualified, so it is
+unaffected by any `search_path` a migration sets:
 
 ```sql
-CREATE TABLE IF NOT EXISTS migrations (
+CREATE TABLE IF NOT EXISTS <schema>.migrations (
   name       varchar(500) PRIMARY KEY,
   version    smallint NOT NULL,
   applied_at timestamp DEFAULT CURRENT_TIMESTAMP
